@@ -27,3 +27,23 @@ fp-info-cache
 # Exported BOM files
 *.xml
 *.csv
+
+## Other files
+# Jasspa backup files
+*#
+
+# Fab file (Gerbers, etc.)
+*/Gerber/*
+
+# Zip files
+*.zip
+
+# Spreadsheets
+*.xls
+*.xlsx
+
+# Documents
+*.pdf
+
+# FreeCAD files
+
