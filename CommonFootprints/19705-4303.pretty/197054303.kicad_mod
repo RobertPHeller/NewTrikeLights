@@ -22,7 +22,7 @@
   (fp_line (start 1.74 -0.5) (end 3.34 -0.5) (layer F.SilkS) (width 0.1))
   (pad 1 thru_hole circle (at 0.000 -0) (size 2.550 2.550) (drill 1.7) (layers *.Cu *.Mask))
   (pad 2 thru_hole circle (at 5.080 -0) (size 2.550 2.550) (drill 1.7) (layers *.Cu *.Mask))
-  (model 19705-4303.stp
+  (model "${KIPRJMOD}/../Common3DModels/19705-4303.stp"
     (at (xyz 0.099999998498151 0 0.029133858643179))
     (scale (xyz 1 1 1))
     (rotate (xyz -90 0 0))
