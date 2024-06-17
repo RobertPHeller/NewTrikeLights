@@ -1,3 +1,4 @@
 (sym_lib_table
   (lib (name "SpadeLugs")(type "KiCad")(uri "${KIPRJMOD}/../CommonLibraries/19705-4303.kicad_sym")(options "")(descr ""))
+  (lib (name "WhiteLEDS")(type "KiCad")(uri "${KIPRJMOD}/../CommonLibraries/158563450.kicad_sym")(options "")(descr ""))
 )

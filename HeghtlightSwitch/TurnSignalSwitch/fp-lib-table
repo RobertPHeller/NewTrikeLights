@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name "SpadeLugs")(type "KiCad")(uri "${KIPRJMOD}/../CommonFootprints/19705-4303.pretty/")(options "")(descr ""))
-)

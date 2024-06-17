@@ -1,0 +1,6 @@
+(fp_lib_table
+  (lib (name "SpadeLugs")(type "KiCad")(uri "${KIPRJMOD}/../CommonFootprints/19705-4303.pretty/")(options "")(descr ""))
+  (lib (name "RotarySW")(type "KiCad")(uri "${KIPRJMOD}/../CommonFootprints/A30405RNCQ.pretty/")(options "")(descr ""))
+  (lib (name "BournsPVG3A")(type "KiCad")(uri "${KIPRJMOD}/../CommonFootprints/BournsPVG3A.pretty/")(options "")(descr ""))
+  (lib (name "MRJE")(type "KiCad")(uri "/home/heller/NewTrikeLights/CommonFootprints/MRJE.pretty")(options "")(descr ""))
+)
