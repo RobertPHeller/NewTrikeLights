@@ -1,3 +1,5 @@
 (sym_lib_table
   (lib (name "SpadeLugs")(type "KiCad")(uri "${KIPRJMOD}/../CommonLibraries/19705-4303.kicad_sym")(options "")(descr ""))
+  (lib (name "SS-10")(type "KiCad")(uri "${KIPRJMOD}/SS-10.kicad_sym")(options "")(descr ""))
+  (lib (name "Piezo")(type "KiCad")(uri "${KIPRJMOD}/../CommonLibraries/PKMCS0909E4000-R1.kicad_sym")(options "")(descr ""))
 )
