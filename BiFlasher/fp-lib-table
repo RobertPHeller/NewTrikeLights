@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "BournsPVG3A")(type "KiCad")(uri "${KIPRJMOD}/../CommonFootprints/BournsPVG3A.pretty/")(options "")(descr ""))
+)
