@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Sun Jun 23 19:39:24 2024
-#  Last Modified : <240624.1013>
+#  Last Modified : <240624.1503>
 #
 #  Description	
 #
@@ -39,7 +39,6 @@
 # 
 #
 #*****************************************************************************
-
 
 import Part, TechDraw, Spreadsheet, TechDrawGui
 import FreeCADGui
@@ -194,47 +193,82 @@ class HeadlightSwitchBodyCoverDrillSheet(object):
         doc.CoverTopView.Source = self.coverObj
         doc.CoverTopView.Direction=(0.0,0.0,1.0)
         doc.CoverTopView.Scale = 1
-        doc.CoverTopView.X = 80
+        doc.CoverTopView.X =  90
         doc.CoverTopView.Y = 130
-        minX = 999999999
-        minY = 999999999
-        maxX = 0
-        maxY = 0
-        i = 0
-        for v in self.cover.Vertexes:
-           if v.X < minX:
-               minX = v.X
-           if v.X > maxX:
-               maxX = v.X    
-           if v.Y < minY:
-               minY = v.Y
-           if v.Y > maxY:
-               maxY = v.Y
-           print ('*** TechPage(): Vertexes[%d] at (%g,%g,%g)'%(i,v.X,v.Y,v.Z))
-           i += 1
-        length = maxX - minX
-        height = maxY - minY
-        print ('*** TechPage(): origin (%g,%g), length = %g, height = %g'%(minX,minY,length,height))    
-        i = 0
-        for e in self.cover.Edges:
-            if isinstance(e.Curve,Part.Circle):
-                #print('*** TechPage(): Edges[%d].Curve is a %s'%(i,type(e.Curve)))
-                circ = e.Curve
-                print('*** TechPage(): Edges[%d].Curve %g at (%g,%g,%g)'%\
-                      (i,circ.Radius*2,circ.Location.x,circ.Location.y,circ.Location.z))
-            i += 1
+        #**************
+        #minX = 999999999
+        #minY = 999999999
+        #maxX = 0
+        #maxY = 0
+        #i = 0
+        #for v in self.cover.Vertexes:
+        #   if v.X < minX:
+        #       minX = v.X
+        #   if v.X > maxX:
+        #       maxX = v.X    
+        #   if v.Y < minY:
+        #       minY = v.Y
+        #   if v.Y > maxY:
+        #       maxY = v.Y
+        #   print ('*** TechPage(): Vertexes[%d] at (%g,%g,%g)'%(i,v.X,v.Y,v.Z))
+        #   i += 1
+        #length = maxX - minX
+        #height = maxY - minY
+        #print ('*** TechPage(): origin (%g,%g), length = %g, height = %g'%(minX,minY,length,height))    
+        #i = 0
+        #for e in self.cover.Edges:
+        #    if isinstance(e.Curve,Part.Circle):
+        #        #print('*** TechPage(): Edges[%d].Curve is a %s'%(i,type(e.Curve)))
+        #        circ = e.Curve
+        #        print('*** TechPage(): Edges[%d].Curve %g at (%g,%g,%g)'%\
+        #              (i,circ.Radius*2,circ.Location.x,circ.Location.y,circ.Location.z))
+        #    i += 1
+        #*********
         doc.addObject('TechDraw::DrawViewDimension','SwitchShaftHDia')
         doc.SwitchShaftHDia.Type = 'Diameter'
         doc.SwitchShaftHDia.References2D=[(doc.CoverTopView,'Edge5')]
-        # 10:11:43  IndexError: {'sclassname': 'N4Base10IndexErrorE', 'sErrMsg': 'DVP::getEdge - No edges found.', 'sfile': '', 'iline': 0, 'sfunction': '', 'swhat': 'DVP::getEdge - No edges found.', 'btranslatable': False, 'breported': False}
         doc.SwitchShaftHDia.FormatSpec='SWHDia'
         doc.SwitchShaftHDia.Arbitrary = True
-        doc.SwitchShaftHDia.X = -30
-        doc.SwitchShaftHDia.Y = 10
+        doc.SwitchShaftHDia.X = -5
+        doc.SwitchShaftHDia.Y = 41
         doc.BodyCoverDrillSheet.addView(doc.SwitchShaftHDia)
         drillsheet.set("A%d"%ir,'%-11.11s'%"SWHDia")
         drillsheet.set("B%d"%ir,'%10.6f'%((self.__SwitchHoleR*2)/25.4))
         drillsheet.set("C%d"%ir,'%10.6f'%(self.__SwitchHoleR*2))
+        ir += 1
+        doc.addObject('TechDraw::DrawViewDimension','MountHoleHDia')
+        doc.MountHoleHDia.Type = 'Diameter'
+        doc.MountHoleHDia.References2D=[(doc.CoverTopView,'Edge4')]
+        doc.MountHoleHDia.FormatSpec='MHDia (2x)'
+        doc.MountHoleHDia.Arbitrary = True
+        doc.MountHoleHDia.X = -38
+        doc.MountHoleHDia.Y = -25
+        doc.BodyCoverDrillSheet.addView(doc.MountHoleHDia)
+        drillsheet.set("A%d"%ir,'%-11.11s'%"MHDia")
+        drillsheet.set("B%d"%ir,'%10.6f'%((self.__MountHoleR*2)/25.4))
+        drillsheet.set("C%d"%ir,'%10.6f'%(self.__MountHoleR*2))
+        ir += 1
+        doc.addObject('TechDraw::DrawViewDimension','LEDHoleHDia')
+        doc.LEDHoleHDia.Type = 'Diameter'
+        doc.LEDHoleHDia.References2D=[(doc.CoverTopView,'Edge9')]
+        doc.LEDHoleHDia.FormatSpec='LEDHDia (3x)'
+        doc.LEDHoleHDia.Arbitrary = True
+        doc.LEDHoleHDia.X = -30.5
+        doc.LEDHoleHDia.Y = 33.5
+        doc.BodyCoverDrillSheet.addView(doc.LEDHoleHDia)
+        drillsheet.set("A%d"%ir,'%-11.11s'%"MHDia")
+        drillsheet.set("B%d"%ir,'%10.6f'%((self.__LEDsR*2)/25.4))
+        drillsheet.set("C%d"%ir,'%10.6f'%(self.__LEDsR*2))
+        ir += 1
+        doc.addObject('TechDraw::DrawViewSpreadsheet','HeadlightSwitchDrillDimBlock')
+        doc.BodyCoverDrillSheet.addView(doc.HeadlightSwitchDrillDimBlock)
+        doc.HeadlightSwitchDrillDimBlock.Source = drillsheet
+        doc.HeadlightSwitchDrillDimBlock.TextSize = 8
+        doc.HeadlightSwitchDrillDimBlock.CellEnd = "C%d"%(ir-1)
+        doc.HeadlightSwitchDrillDimBlock.recompute()
+        doc.HeadlightSwitchDrillDimBlock.X = 195
+        doc.HeadlightSwitchDrillDimBlock.Y = 130
+        doc.BodyCoverDrillSheet.recompute()
         doc.recompute()
         
 if __name__ == '__main__':
