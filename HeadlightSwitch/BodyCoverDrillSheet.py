@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Sun Jun 23 19:39:24 2024
-#  Last Modified : <240623.2023>
+#  Last Modified : <240624.0006>
 #
 #  Description	
 #
@@ -59,7 +59,8 @@ class HeadlightSwitchBodyCoverDrillSheet(object):
     __MountHoleX1 = 2.45
     __MountHoleX2 = 88.35-2.45
     __MountHoleY  = 12.7
-    __MountHoleR  = (2.2)/2
+    __MountHoleR  = (2.2)/2.0
+    __MountStandR = (.1875*25.4)/2.0
     __LEDsY       = 6.604
     __LEDHiBeamX  = 8.382
     __LEDLoBeamX  = 8.382+2.54
@@ -100,7 +101,14 @@ class HeadlightSwitchBodyCoverDrillSheet(object):
                 .extrude(Base.Vector(0,0,-self.__LEDRodLength))
         self.rodMarker = Part.Face(Part.Wire(Part.makeCircle(self.__LEDsR,origin.add(Base.Vector(self.__LEDMarkerX,self.__LEDsY,self.__CoverThick)))))\
                 .extrude(Base.Vector(0,0,-self.__LEDRodLength))
-        
+        standOff = Part.Face(Part.Wire(Part.makeCircle(self.__MountStandR,origin.add(Base.Vector(self.__MountHoleX1,self.__MountHoleY,0)))))\
+                .extrude(Base.Vector(0,0,-self.__SwitchDepth))
+        self.standOff1 = standOff.cut(Part.Face(Part.Wire(Part.makeCircle(self.__MountHoleR,origin.add(Base.Vector(self.__MountHoleX1,self.__MountHoleY,0)))))\
+                .extrude(Base.Vector(0,0,-self.__SwitchDepth)))
+        standOff = Part.Face(Part.Wire(Part.makeCircle(self.__MountStandR,origin.add(Base.Vector(self.__MountHoleX2,self.__MountHoleY,0)))))\
+                .extrude(Base.Vector(0,0,-self.__SwitchDepth))
+        self.standOff2 = standOff.cut(Part.Face(Part.Wire(Part.makeCircle(self.__MountHoleR,origin.add(Base.Vector(self.__MountHoleX2,self.__MountHoleY,0)))))\
+                .extrude(Base.Vector(0,0,-self.__SwitchDepth)))
     def show(self,doc=None):
         if doc==None:
             doc = App.activeDocument()
@@ -123,6 +131,16 @@ class HeadlightSwitchBodyCoverDrillSheet(object):
         obj.Label=self.name+"_Marker"
         obj.ViewObject.ShapeColor=tuple([0.0,1.0,0.0])
         obj.ViewObject.Transparency=90
+        obj = doc.addObject("Part::Feature",self.name+"_standOff1")
+        obj.Shape=self.standOff1
+        obj.Label=self.name+"_standOff1"
+        obj.ViewObject.ShapeColor=tuple([0.7,0.7,0.7])
+        obj.ViewObject.Transparency=50
+        obj = doc.addObject("Part::Feature",self.name+"_standOff2")
+        obj.Shape=self.standOff2
+        obj.Label=self.name+"_standOff2"
+        obj.ViewObject.ShapeColor=tuple([0.7,0.7,0.7])
+        obj.ViewObject.Transparency=50
 
 if __name__ == '__main__':
     App.ActiveDocument=App.newDocument("Temp")
