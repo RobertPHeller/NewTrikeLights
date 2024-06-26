@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Jun 25 13:48:11 2024
-#  Last Modified : <240625.1624>
+#  Last Modified : <240626.0955>
 #
 #  Description	
 #
@@ -56,18 +56,19 @@ import datetime
 class BiFlasherHousing(object):
     __BoardWidth    = 19.05
     __BoardLength   = 25.4
+    __BoardThick    = 1.5
     __HousingWidth  = 19.05+(.125*25.4)
     __HousingLength = 25.4+(.125*25.4)
-    __DepthAbove    = 3
-    __DepthBelow    = 3
+    __DepthAbove    = 6
+    __DepthBelow    = 6
     __DepthBottom   = .125*25.4
     __NutWidth      = (1.0/4.0)*25.4
     __NutThick      = (3.0/32.0)*25.4
-    __MHoles        = [(7.14375,7.14375), (7.14375,21.43125), \
-                       (15.08125,21.43125), (15.08125,7.14375)] 
+    __NutOffset     = 7.14375
     __MHoleRadius   = (.1285*25.4)/2
     __30DegRadians  = (30.0/180.0)*math.pi
     __PoleRadius    = (.25*25.4)/2.0
+    __WireHoleR     = 4.0/2.0
     def __HexNut(self,origin):
         if not isinstance(origin,Base.Vector):
             raise RuntimeError("origin is not a Vector!")
@@ -98,14 +99,69 @@ class BiFlasherHousing(object):
                                  origin)\
                       .extrude(Base.Vector(0,0,(self.__PoleRadius*.8)+\
                                                self.__DepthBottom+\
-                                               self.__NutThick))
+                                               self.__NutThick+\
+                                               self.__DepthBelow+\
+                                               self.__DepthAbove))
         poleCut = Part.Face(Part.Wire(Part.makeCircle(self.__PoleRadius,\
-                                                      origin.add(Base.Vector(0,self.__HousingLength/2,-(self.__PoleRadius*.2))),\
-                                                      Base.Vector(1,0,0))))\
-                       .extrude(Base.Vector(self.__HousingWidth,0,0))
+                                                      origin.add(Base.Vector(self.__HousingWidth/2,0,-(self.__PoleRadius*.2))),\
+                                                      Base.Vector(0,1,0))))\
+                       .extrude(Base.Vector(0,self.__HousingLength,0))
         housing = housing.cut(poleCut)
+        belowW = self.__BoardWidth-((.125*25.4)/2)
+        belowL = self.__BoardLength-((.125*25.4)/2)
+        belowO = origin.add(Base.Vector(((self.__HousingWidth-belowW)/2),\
+                                        ((self.__HousingLength-belowL)/2),\
+                                        (self.__PoleRadius*.8)+\
+                                        self.__DepthBottom+\
+                                        self.__NutThick))
+        below = Part.makePlane(belowW,belowL,belowO)\
+                    .extrude(Base.Vector(0,0,self.__DepthBelow))
+        housing = housing.cut(below)
+        aboveO = origin.add(\
+                Base.Vector((self.__HousingWidth-self.__BoardWidth)/2,\
+                            (self.__HousingLength-self.__BoardLength)/2,\
+                            (self.__PoleRadius*.8)+\
+                            self.__DepthBottom+\
+                            self.__NutThick+\
+                            self.__DepthBelow))
+        above = Part.makePlane(self.__BoardWidth,self.__BoardLength,aboveO)\
+                    .extrude(Base.Vector(0,0,self.__DepthAbove))
+        housing = housing.cut(above)
+        plusHoleO = origin.add(Base.Vector(((self.__HousingWidth-\
+                                            self.__BoardWidth)/2)+\
+                                           self.__WireHoleR,\
+                                           0,(self.__PoleRadius*.8)+\
+                                             self.__DepthBottom+\
+                                             self.__NutThick+\
+                                             self.__DepthBelow+\
+                                             self.__BoardThick+\
+                                             self.__WireHoleR))
+        plusHole = Part.Face(Part.Wire(Part.makeCircle(self.__WireHoleR,\
+                                                       plusHoleO,
+                                                       Base.Vector(0,1,0))))\
+                         .extrude(Base.Vector(0,(.125*25.4),0))
+        housing = housing.cut(plusHole)
+        minusHoleXOff = self.__HousingWidth- \
+                        (((self.__HousingWidth-self.__BoardWidth)/2)+\
+                         self.__WireHoleR)
+        minusHoleO = origin.add(Base.Vector(minusHoleXOff,\
+                                           0,(self.__PoleRadius*.8)+\
+                                             self.__DepthBottom+\
+                                             self.__NutThick+\
+                                             self.__DepthBelow-\
+                                             self.__WireHoleR))
+        minusHole = Part.Face(Part.Wire(Part.makeCircle(self.__WireHoleR,\
+                                                       minusHoleO,
+                                                       Base.Vector(0,1,0))))\
+                         .extrude(Base.Vector(0,(.125*25.4)+4,0))
+        housing = housing.cut(minusHole)
         #self.nuts = []
-        for x,y in self.__MHoles:
+        MHoles = []
+        MHoles.append((self.__NutOffset,self.__NutOffset))
+        MHoles.append((self.__NutOffset,self.__HousingLength-self.__NutOffset))
+        MHoles.append((self.__HousingWidth-self.__NutOffset,self.__HousingLength-self.__NutOffset))
+        MHoles.append((self.__HousingWidth-self.__NutOffset,self.__NutOffset))
+        for x,y in MHoles:
             mhole = Part.Face(Part.Wire(Part.makeCircle(self.__MHoleRadius,\
                                                         origin.add(Base.Vector(x,y,0)))))\
                       .extrude(Base.Vector(0,0,(self.__PoleRadius*.8)+\
