@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Jun 25 13:48:11 2024
-#  Last Modified : <240626.1036>
+#  Last Modified : <240626.1111>
 #
 #  Description	
 #
@@ -46,6 +46,8 @@ import FreeCADGui
 from FreeCAD import Console
 from FreeCAD import Base
 import FreeCAD as App
+import Mesh
+
 import os
 import sys
 sys.path.append(os.path.dirname(__file__))
@@ -204,18 +206,20 @@ class BiFlasherHousing(object):
         obj.Shape=self.housing
         obj.Label=self.name+"_housing"
         obj.ViewObject.ShapeColor=tuple([0.7,0.7,0.7])
+        self.housingObj = obj
         obj = doc.addObject("Part::Feature",self.name+"_clamp")
         obj.Shape=self.clamp
         obj.Label=self.name+"_clamp"
         obj.ViewObject.ShapeColor=tuple([0.7,0.7,0.7])
-        #i = 0
-        #for n in self.nuts:
-        #    nlab = ("_nut%d"%i)
-        #    obj = doc.addObject("Part::Feature",self.name+nlab)
-        #    obj.Shape=n
-        #    obj.Label=self.name+nlab
-        #    obj.ViewObject.ShapeColor=tuple([0.9,0.9,0.9])
-        #    i += 1
+        self.clampObj = obj
+    def MakeHousingSTL(self,filename):
+        objs=[]
+        objs.append(self.housingObj)
+        Mesh.export(objs,filename)
+    def MakeClampSTL(self,filename):
+        objs=[]
+        objs.append(self.clampObj)
+        Mesh.export(objs,filename)
 
 if __name__ == '__main__':
     docs = App.listDocuments()
@@ -227,4 +231,5 @@ if __name__ == '__main__':
     x.show(doc)
     Gui.SendMsgToActiveView("ViewFit")
     Gui.activeDocument().activeView().viewTop()
-    
+    x.MakeHousingSTL("BiFlasherHousing.stl")
+    x.MakeClampSTL("BiFlasherClamp.stl")    
