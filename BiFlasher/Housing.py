@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Jun 25 13:48:11 2024
-#  Last Modified : <240626.0955>
+#  Last Modified : <240626.1036>
 #
 #  Description	
 #
@@ -64,7 +64,7 @@ class BiFlasherHousing(object):
     __DepthBottom   = .125*25.4
     __NutWidth      = (1.0/4.0)*25.4
     __NutThick      = (3.0/32.0)*25.4
-    __NutOffset     = 7.14375
+    __NutOffset     = 6.25
     __MHoleRadius   = (.1285*25.4)/2
     __30DegRadians  = (30.0/180.0)*math.pi
     __PoleRadius    = (.25*25.4)/2.0
@@ -136,11 +136,13 @@ class BiFlasherHousing(object):
                                              self.__DepthBelow+\
                                              self.__BoardThick+\
                                              self.__WireHoleR))
-        plusHole = Part.Face(Part.Wire(Part.makeCircle(self.__WireHoleR,\
+        for i in range(3):
+            plusHole = Part.Face(Part.Wire(Part.makeCircle(self.__WireHoleR,\
                                                        plusHoleO,
                                                        Base.Vector(0,1,0))))\
                          .extrude(Base.Vector(0,(.125*25.4),0))
-        housing = housing.cut(plusHole)
+            housing = housing.cut(plusHole)
+            plusHoleO = plusHoleO.add(Base.Vector(0,0,self.__WireHoleR/2))
         minusHoleXOff = self.__HousingWidth- \
                         (((self.__HousingWidth-self.__BoardWidth)/2)+\
                          self.__WireHoleR)
@@ -150,11 +152,13 @@ class BiFlasherHousing(object):
                                              self.__NutThick+\
                                              self.__DepthBelow-\
                                              self.__WireHoleR))
-        minusHole = Part.Face(Part.Wire(Part.makeCircle(self.__WireHoleR,\
+        for i in range(10):
+            minusHole = Part.Face(Part.Wire(Part.makeCircle(self.__WireHoleR,\
                                                        minusHoleO,
                                                        Base.Vector(0,1,0))))\
                          .extrude(Base.Vector(0,(.125*25.4)+4,0))
-        housing = housing.cut(minusHole)
+            housing = housing.cut(minusHole)
+            minusHoleO = minusHoleO.add(Base.Vector(0,0,self.__WireHoleR/2))
         #self.nuts = []
         MHoles = []
         MHoles.append((self.__NutOffset,self.__NutOffset))
@@ -174,12 +178,35 @@ class BiFlasherHousing(object):
             housing = housing.cut(nut)
             #self.nuts.append(nut)
         self.housing = housing
+        clamporigin = origin.add(Base.Vector(25.4,0,0))
+        clamp = Part.makePlane(self.__HousingWidth,self.__HousingLength,\
+                                clamporigin)\
+                     .extrude(Base.Vector(0,0,self.__DepthBottom+\
+                                              (self.__PoleRadius*.8)))
+        poleCut = Part.Face(Part.Wire(Part.makeCircle(self.__PoleRadius,\
+                            clamporigin.add(Base.Vector(self.__HousingWidth/2,\
+                                                        0,self.__DepthBottom+\
+                                                          self.__PoleRadius)),\
+                                                      Base.Vector(0,1,0))))\
+                       .extrude(Base.Vector(0,self.__HousingLength,0))
+        clamp = clamp.cut(poleCut)
+        for x,y in MHoles:
+            mhole = Part.Face(Part.Wire(Part.makeCircle(self.__MHoleRadius,\
+                                                        clamporigin.add(Base.Vector(x,y,0)))))\
+                      .extrude(Base.Vector(0,0,(self.__PoleRadius*.8)+\
+                                               self.__DepthBottom))
+            clamp = clamp.cut(mhole)
+        self.clamp = clamp
     def show(self,doc=None):
         if doc==None:
             doc = App.activeDocument()
         obj = doc.addObject("Part::Feature",self.name+"_housing")
         obj.Shape=self.housing
         obj.Label=self.name+"_housing"
+        obj.ViewObject.ShapeColor=tuple([0.7,0.7,0.7])
+        obj = doc.addObject("Part::Feature",self.name+"_clamp")
+        obj.Shape=self.clamp
+        obj.Label=self.name+"_clamp"
         obj.ViewObject.ShapeColor=tuple([0.7,0.7,0.7])
         #i = 0
         #for n in self.nuts:
