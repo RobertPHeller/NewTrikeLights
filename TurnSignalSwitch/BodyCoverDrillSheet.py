@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Mon Jun 24 21:44:08 2024
-#  Last Modified : <240625.0852>
+#  Last Modified : <240626.0824>
 #
 #  Description	
 #
@@ -51,6 +51,25 @@ import sys
 sys.path.append(os.path.dirname(__file__))
 
 import datetime
+
+from PySide.QtCore import QCoreApplication, QEventLoop, QTimer
+import time
+from PySide import QtGui
+def execute(loop, ms):
+    timer = QTimer()
+    timer.setSingleShot(True)
+    
+    timer.timeout.connect(loop.quit)
+    timer.start(ms)
+    loop.exec_()
+
+def sleep(ms):
+    if not QCoreApplication.instance():
+        app = QCoreApplication([])
+        execute(app, ms)
+    else:
+        loop = QEventLoop()
+        execute(loop, ms)
 
 class TurnSignalSwitchBodyCoverDrillSheet(object):
     __BoardWidth  = 88.35
@@ -198,6 +217,8 @@ class TurnSignalSwitchBodyCoverDrillSheet(object):
         doc.CoverTopView.Scale = 1
         doc.CoverTopView.X =  90
         doc.CoverTopView.Y = 130
+        doc.CoverTopView.recompute()
+        sleep(500)
         #**************
         #minX = 999999999
         #minY = 999999999
